@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import { Radar, Zap } from 'lucide-react';
 import { Vehicle } from '../constants';
@@ -11,8 +11,32 @@ interface VehicleDetailsProps {
 }
 
 export const VehicleDetails = ({ vehicle, onBack, onAddToCart, isInCart }: VehicleDetailsProps) => {
-  // Generate gallery images (use main image with different treatments for demo)
-  const gallery = [vehicle.image, vehicle.image, vehicle.image];
+  const galleryScrollRef = useRef<HTMLDivElement>(null);
+  const [selectedColorId, setSelectedColorId] = useState(vehicle.colorVariants?.[0]?.id ?? '');
+  useEffect(() => {
+    setSelectedColorId(vehicle.colorVariants?.[0]?.id ?? '');
+  }, [vehicle.id, vehicle.colorVariants]);
+  const selectedColor = useMemo(
+    () => vehicle.colorVariants?.find((v) => v.id === selectedColorId) ?? vehicle.colorVariants?.[0],
+    [selectedColorId, vehicle.colorVariants]
+  );
+  const heroImage = selectedColor?.image ?? vehicle.image;
+  const gallery = selectedColor?.images && selectedColor.images.length > 0
+    ? selectedColor.images
+    : vehicle.images && vehicle.images.length > 0
+      ? vehicle.images
+      : [vehicle.image, vehicle.image, vehicle.image];
+  const detailGallery = vehicle.detailImages && vehicle.detailImages.length > 0 ? vehicle.detailImages : [];
+  const scrollGallery = (direction: 'left' | 'right') => {
+    const container = galleryScrollRef.current;
+    if (!container) return;
+    const track = container.firstElementChild as HTMLElement | null;
+    const firstCard = track?.firstElementChild as HTMLElement | null;
+    const gap = track ? parseFloat(getComputedStyle(track).columnGap || getComputedStyle(track).gap || '0') : 0;
+    const cardWidth = firstCard?.getBoundingClientRect().width ?? Math.round(container.clientWidth * 0.8);
+    const amount = Math.round(cardWidth + gap);
+    container.scrollBy({ left: direction === 'right' ? amount : -amount, behavior: 'smooth' });
+  };
   
   // Calculate lease price estimate (~0.8% of price per month)
   const leasePrice = Math.round(vehicle.price * 0.008);
@@ -24,7 +48,7 @@ export const VehicleDetails = ({ vehicle, onBack, onAddToCart, isInCart }: Vehic
         <img 
           alt={vehicle.name} 
           className="absolute inset-0 w-full h-full object-cover z-0 brightness-75" 
-          src={vehicle.image}
+          src={heroImage}
           referrerPolicy="no-referrer"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent z-10"></div>
@@ -115,26 +139,91 @@ export const VehicleDetails = ({ vehicle, onBack, onAddToCart, isInCart }: Vehic
             <button className="text-primary font-headline text-xs font-bold uppercase tracking-widest hover:underline decoration-primary/50 underline-offset-8 transition-all">Locate Nexus</button>
           </motion.div>
 
+          {vehicle.colorVariants && vehicle.colorVariants.length > 0 && (
+            <div className="md:col-span-12 -mb-2">
+              <p className="text-[10px] uppercase tracking-[0.2em] text-on-surface-variant font-bold mb-3">Color Selection</p>
+              <div className="flex gap-3 flex-wrap">
+                {vehicle.colorVariants.map((variant) => {
+                  const active = selectedColor?.id === variant.id;
+                  return (
+                    <button
+                      key={variant.id}
+                      onClick={() => setSelectedColorId(variant.id)}
+                      className={`px-3 py-2 border rounded-md text-xs font-bold tracking-widest uppercase transition-colors ${
+                        active ? 'border-primary text-primary bg-surface-container-high' : 'border-outline-variant/30 text-on-surface-variant hover:text-on-surface'
+                      }`}
+                    >
+                      <span className="inline-flex items-center gap-2">
+                        <span className="w-3 h-3 rounded-full border border-white/30" style={{ backgroundColor: variant.swatch }}></span>
+                        {variant.label}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           {/* Gallery Row */}
-          {gallery.map((img, i) => (
-            <motion.div 
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              className="md:col-span-4 aspect-square overflow-hidden bg-surface-container-low"
-            >
-              <img 
-                alt={`${vehicle.name} Gallery ${i + 1}`} 
-                className="w-full h-full object-cover hover:scale-105 transition-transform duration-700 grayscale hover:grayscale-0" 
-                src={img}
-                referrerPolicy="no-referrer"
-              />
-            </motion.div>
-          ))}
+          <div className="md:col-span-12">
+            <div className="flex items-center justify-end gap-2 mb-3">
+              <button
+                onClick={() => scrollGallery('left')}
+                className="px-3 h-9 border border-outline-variant/30 text-on-surface-variant hover:text-on-surface hover:border-primary/40 transition-colors text-xs font-bold uppercase tracking-widest"
+              >
+                Prev
+              </button>
+              <button
+                onClick={() => scrollGallery('right')}
+                className="px-3 h-9 border border-outline-variant/30 text-on-surface-variant hover:text-on-surface hover:border-primary/40 transition-colors text-xs font-bold uppercase tracking-widest"
+              >
+                Next
+              </button>
+            </div>
+            <div ref={galleryScrollRef} className="overflow-x-auto no-scrollbar">
+              <div className="flex gap-4 min-w-max">
+              {gallery.map((img, i) => (
+                <motion.div 
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.06 }}
+                  className="w-[300px] md:w-[420px] aspect-[4/3] overflow-hidden bg-surface-container-low flex-shrink-0"
+                >
+                  <img 
+                    alt={`${vehicle.name} Gallery ${i + 1}`} 
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-700 grayscale hover:grayscale-0" 
+                    src={img}
+                    referrerPolicy="no-referrer"
+                  />
+                </motion.div>
+              ))}
+              </div>
+            </div>
+          </div>
         </div>
       </section>
+
+      {detailGallery.length > 0 && (
+        <section className="px-6 lg:px-24 mt-12">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="font-headline text-2xl md:text-3xl font-bold uppercase text-on-surface">Detail Gallery</h3>
+            <span className="text-[10px] uppercase tracking-[0.2em] text-on-surface-variant font-bold">Common Across Colors</span>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {detailGallery.map((img, i) => (
+              <div key={i} className="aspect-[4/3] overflow-hidden bg-surface-container-low">
+                <img
+                  alt={`${vehicle.name} Detail ${i + 1}`}
+                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+                  src={img}
+                  referrerPolicy="no-referrer"
+                />
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Specs Section */}
       <section className="px-6 lg:px-24 mt-32 mb-16">
