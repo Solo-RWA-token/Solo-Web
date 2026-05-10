@@ -1,13 +1,15 @@
 import React from "react";
 import { motion } from "motion/react";
 import { ArrowRight, ArrowLeft, Cpu } from "lucide-react";
+import { useNavigate } from 'react-router-dom';
 import { SpecTile } from "./Shared";
-import { Vehicle, VEHICLES } from "../constants";
+import { VEHICLES } from "../constants";
 
-export const Home = ({ onNavigate }: { onNavigate: (s: string) => void }) => {
+export const Home = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="relative">
-      {/* Hero Section */}
       <section className="relative min-h-[85vh] flex flex-col justify-center overflow-hidden px-6 lg:px-24">
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-gradient-to-r from-surface via-surface/60 to-transparent z-10"></div>
@@ -35,7 +37,7 @@ export const Home = ({ onNavigate }: { onNavigate: (s: string) => void }) => {
           </h1>
           <div className="mt-12 flex flex-col md:flex-row gap-6 items-start md:items-center">
             <button
-              onClick={() => onNavigate("catalog")}
+              onClick={() => navigate('/catalog')}
               className="px-10 py-4 bg-gradient-to-br from-primary to-primary-dim text-surface font-headline font-bold tracking-widest rounded-md hover:scale-105 transition-transform duration-300 uppercase"
             >
               INITIALIZE INTERFACE
@@ -49,14 +51,12 @@ export const Home = ({ onNavigate }: { onNavigate: (s: string) => void }) => {
           </div>
         </motion.div>
 
-        {/* Spec Tiles */}
         <div className="absolute right-0 bottom-24 hidden lg:flex flex-col gap-1 items-end pointer-events-none">
           <SpecTile label="0-60 MPH BASELINE" value="1.9" unit="S" accent />
           <SpecTile label="PEAK OUTPUT" value="820" unit="KW" />
         </div>
       </section>
 
-      {/* Fleet Section */}
       <section className="py-24 bg-surface-container-low">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex justify-between items-end mb-16">
@@ -93,7 +93,6 @@ export const Home = ({ onNavigate }: { onNavigate: (s: string) => void }) => {
                 className="group relative bg-surface-container-high rounded-xl overflow-hidden hover:bg-surface-container-highest transition-colors duration-500"
               >
                 <div className="aspect-[4/5] overflow-hidden">
-                  {/* SOLO uses a custom object position because the source image subject is not centered. */}
                   <img
                     className={`w-full h-full object-cover grayscale hover:scale-110 transition-transform duration-700 opacity-80 group-hover:opacity-100 
                       ${vehicle.id === "solo" ? "object-[45%_50%]" : "object-center"} 
@@ -136,7 +135,7 @@ export const Home = ({ onNavigate }: { onNavigate: (s: string) => void }) => {
                     </div>
                   </div>
                   <button
-                    onClick={() => onNavigate("catalog")}
+                    onClick={() => navigate('/catalog')}
                     className="w-full mt-6 py-3 bg-surface text-primary border border-primary/20 font-headline font-bold text-sm tracking-widest hover:bg-primary hover:text-surface transition-all rounded-md uppercase"
                   >
                     VIEW SCHEMATICS
@@ -148,7 +147,6 @@ export const Home = ({ onNavigate }: { onNavigate: (s: string) => void }) => {
         </div>
       </section>
 
-      {/* Technical Specs Bento */}
       <section className="py-24 bg-surface px-6">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-1">
           <div className="lg:col-span-8 bg-surface-container-low p-12 relative overflow-hidden">

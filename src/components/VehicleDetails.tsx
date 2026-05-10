@@ -1,17 +1,18 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { Radar, Zap } from 'lucide-react';
 import { Vehicle } from '../constants';
 
 interface VehicleDetailsProps {
   vehicle: Vehicle;
-  onBack: () => void;
   onAddToCart: (vehicle: Vehicle) => void;
   isInCart?: boolean;
 }
 
-export const VehicleDetails = ({ vehicle, onBack, onAddToCart, isInCart }: VehicleDetailsProps) => {
+export const VehicleDetails = ({ vehicle, onAddToCart, isInCart }: VehicleDetailsProps) => {
   const galleryScrollRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
   const [selectedColorId, setSelectedColorId] = useState(vehicle.colorVariants?.[0]?.id ?? '');
   useEffect(() => {
     setSelectedColorId(vehicle.colorVariants?.[0]?.id ?? '');
@@ -260,7 +261,7 @@ export const VehicleDetails = ({ vehicle, onBack, onAddToCart, isInCart }: Vehic
           <div className="flex gap-4 w-full md:w-auto">
             <motion.button 
               whileHover={{ backgroundColor: 'rgba(0, 42, 52, 1)' }}
-              onClick={onBack}
+              onClick={() => navigate(-1)}
               className="flex-1 md:flex-none px-8 h-12 flex items-center justify-center bg-surface-container-high text-primary border border-primary/20 transition-all duration-300 font-headline text-xs font-bold uppercase tracking-widest active:scale-95"
             >
               Back

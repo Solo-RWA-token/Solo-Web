@@ -3,15 +3,13 @@ import { motion } from 'motion/react';
 import { useAuth } from '../context/AuthContext';
 import { Order } from '../types';
 import { ArrowRight, Package, Activity, Zap, ShieldCheck } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const ORDERS_KEY = 'solx_mock_orders';
 
-interface OrdersProps {
-  onNavigate: (screen: string) => void;
-}
-
-export const Orders = ({ onNavigate }: OrdersProps) => {
+export const Orders = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -21,7 +19,6 @@ export const Orders = ({ onNavigate }: OrdersProps) => {
       return;
     }
 
-    // Load orders from localStorage
     try {
       const storedOrders = JSON.parse(localStorage.getItem(ORDERS_KEY) || '[]') as Order[];
       const userOrders = storedOrders.filter(order => order.userId === user.uid);
@@ -49,7 +46,7 @@ export const Orders = ({ onNavigate }: OrdersProps) => {
 
   return (
     <div className="pt-24 pb-32 px-6 max-w-7xl mx-auto min-h-screen">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="mb-12"
@@ -62,7 +59,7 @@ export const Orders = ({ onNavigate }: OrdersProps) => {
       </motion.div>
 
       {orders.length === 0 ? (
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="bg-surface-container-low p-12 rounded-xl border border-outline-variant/10 text-center"
@@ -70,8 +67,8 @@ export const Orders = ({ onNavigate }: OrdersProps) => {
           <Package className="mx-auto text-outline-variant mb-4" size={48} />
           <h3 className="font-headline text-xl font-bold text-on-surface uppercase mb-2">No Deployments Detected</h3>
           <p className="font-sans text-sm text-on-surface-variant mb-8">Your fleet is currently empty. Visit the catalog to acquire assets.</p>
-          <button 
-            onClick={() => onNavigate('catalog')}
+          <button
+            onClick={() => navigate('/catalog')}
             className="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-br from-primary to-primary-dim text-surface font-headline font-bold uppercase tracking-widest rounded-lg hover:scale-[1.02] active:scale-95 transition-all"
           >
             Browse Catalog
@@ -90,10 +87,10 @@ export const Orders = ({ onNavigate }: OrdersProps) => {
             >
               <div className="flex items-start gap-6">
                 <div className="w-24 h-24 bg-surface-container-high overflow-hidden shrink-0 rounded-lg">
-                  <img 
-                    className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity grayscale group-hover:grayscale-0" 
-                    src={order.assetImage} 
-                    alt={order.assetName} 
+                  <img
+                    className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity grayscale group-hover:grayscale-0"
+                    src={order.assetImage}
+                    alt={order.assetName}
                     referrerPolicy="no-referrer"
                   />
                 </div>
@@ -109,7 +106,6 @@ export const Orders = ({ onNavigate }: OrdersProps) => {
               </div>
 
               <div className="flex items-center justify-between md:justify-end gap-8 w-full md:w-auto">
-                {/* Status Badge */}
                 <div className={`flex items-center gap-2 px-3 py-1 rounded-lg border ${
                   order.status === 'delivered' ? 'bg-tertiary-container/10 border-tertiary-dim/20 text-tertiary-dim' :
                   order.status === 'confirmed' ? 'bg-primary/10 border-primary/20 text-primary' :
@@ -122,7 +118,7 @@ export const Orders = ({ onNavigate }: OrdersProps) => {
                   }`}></span>
                   <span className="font-sans text-[10px] font-bold tracking-widest uppercase">{order.status}</span>
                 </div>
-                
+
                 <button className="flex items-center gap-2 font-sans text-xs font-bold tracking-widest text-primary uppercase group/btn">
                   View Details
                   <ArrowRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
@@ -133,7 +129,6 @@ export const Orders = ({ onNavigate }: OrdersProps) => {
         </div>
       )}
 
-      {/* Stats Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12">
         <div className="bg-surface-container-high/60 backdrop-blur-xl p-6 rounded-xl relative overflow-hidden border border-outline-variant/10">
           <Activity size={20} className="text-primary mb-2" />
