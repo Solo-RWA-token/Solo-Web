@@ -1,9 +1,11 @@
 
 import React from 'react';
-import { motion } from 'motion/react';
-import { Verified, Network, QrCode } from 'lucide-react';
+import { Network, QrCode, Verified } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
-export const OrderSuccess = ({ onNavigate }: { onNavigate: (s: string) => void }) => {
+export const OrderSuccess = () => {
+  const navigate = useNavigate();
+
   return (
     <main className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden px-6 pt-12 pb-24">
       <div className="absolute inset-0 z-0 pointer-events-none opacity-20">
@@ -15,14 +17,14 @@ export const OrderSuccess = ({ onNavigate }: { onNavigate: (s: string) => void }
         <div className="w-full flex flex-col items-start md:items-center mb-12">
           <span className="font-sans text-tertiary text-sm tracking-[0.4em] uppercase mb-4 block font-bold">Operation Secured</span>
           <h1 className="font-headline text-6xl md:text-9xl font-black text-primary leading-none tracking-tighter uppercase text-center md:text-center">
-            MISSION<br/><span className="text-on-surface">COMPLETE</span>
+            MISSION<br /><span className="text-on-surface">COMPLETE</span>
           </h1>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-12 gap-4 w-full">
           <div className="md:col-span-8 h-80 bg-surface-container-low relative overflow-hidden group border border-outline-variant/10">
-            <img 
-              className="absolute inset-0 w-full h-full object-cover mix-blend-luminosity group-hover:mix-blend-normal transition-all duration-700" 
+            <img
+              className="absolute inset-0 w-full h-full object-cover mix-blend-luminosity group-hover:mix-blend-normal transition-all duration-700"
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQ24EWBrCgcL3nlYcfVVbPtHhF4tg5eAppYtxDje45v-bLSSNKVh-XCA6WsEmI8PDGeTOXCfPJZ7pTMrAmHGr2uYi-8rFsiUatx92FtJu0MV_Ah5xOdND-u41Trpos3xIH2EqHLxZWA2j1K7tT5QrEDFMNr15t0ocixJT2ORBfqugrIOO8VEBPImARQ_rdnnzqHbXvLqJPGEyIL2VOoeY1jWoWQOFsFceS4p_hzLWZpwiMvHK_Y5S7KUvrgwl065y04VgLQoArMWc"
               alt="Futuristic spacecraft interior"
               referrerPolicy="no-referrer"
@@ -81,8 +83,8 @@ export const OrderSuccess = ({ onNavigate }: { onNavigate: (s: string) => void }
                   <p className="text-on-surface-variant text-sm font-sans">Vessel is currently synchronizing with your Nexus core.</p>
                 </div>
               </div>
-              <button 
-                onClick={() => onNavigate('orders')}
+              <button
+                onClick={() => navigate('/orders')}
                 className="w-full md:w-auto kinetic-gradient px-8 py-4 rounded-md text-surface font-sans text-sm font-bold uppercase tracking-widest text-center hover:scale-105 transition-transform duration-200 active:scale-95"
               >
                 View Fleet History

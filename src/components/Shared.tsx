@@ -1,18 +1,25 @@
 
 import React from 'react';
-import { motion } from 'motion/react';
-import { Menu, ShoppingCart, Home, Grid, Receipt, User, ArrowRight, ArrowLeft, Trash2, Verified, ShieldCheck, Lock, Zap, Cpu, Battery, Activity, LogIn, LogOut } from 'lucide-react';
+import { Menu, ShoppingCart, Home, Grid, Receipt, User, LogIn, LogOut } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { UserProfile } from '../types';
+import { useNavigate } from 'react-router-dom';
 
-// --- Shared Components ---
-
-export const Navbar = ({ onNavigate, currentScreen, cartCount, user }: { onNavigate: (s: string) => void, currentScreen: string, cartCount: number, user?: UserProfile | null }) => {
+export const Navbar = ({ currentPath, cartCount, user }: { currentPath: string, cartCount: number, user?: UserProfile | null }) => {
   const { logout } = useAuth();
+  const navigate = useNavigate();
+
   const handleLogout = async () => {
     await logout();
-    onNavigate('home');
+    navigate('/');
   };
+
+  const navItems = [
+    { path: '/', label: 'home' },
+    { path: '/catalog', label: 'catalog' },
+    { path: '/orders', label: 'orders' },
+    { path: '/profile', label: 'profile' },
+  ];
 
   return (
     <header className="bg-surface fixed top-0 w-full z-50 shadow-[0_10px_40px_rgba(0,42,52,0.4)] border-b border-outline-variant/10">
@@ -21,32 +28,35 @@ export const Navbar = ({ onNavigate, currentScreen, cartCount, user }: { onNavig
           <button className="text-primary active:scale-95 duration-200 cursor-pointer">
             <Menu size={24} />
           </button>
-          <span 
+          <span
             className="font-headline font-black tracking-tighter text-xl text-primary uppercase cursor-pointer"
-            onClick={() => onNavigate('home')}
+            onClick={() => navigate('/')}
           >
             SOLX NEXUS
           </span>
         </div>
         <div className="hidden md:flex gap-8 items-center">
-          {['home', 'catalog', 'orders', 'profile'].map((item) => (
-            <button 
-              key={item}
-              onClick={() => onNavigate(item)}
-              className={`font-headline font-bold text-sm tracking-widest uppercase transition-colors ${currentScreen === item ? 'text-primary' : 'text-outline hover:text-primary'}`}
-            >
-              {item}
-            </button>
-          ))}
+          {navItems.map((item) => {
+            const active = currentPath === item.path || (item.path !== '/' && currentPath.startsWith(item.path));
+            return (
+              <button
+                key={item.path}
+                onClick={() => navigate(item.path)}
+                className={`font-headline font-bold text-sm tracking-widest uppercase transition-colors ${active ? 'text-primary' : 'text-outline hover:text-primary'}`}
+              >
+                {item.label}
+              </button>
+            );
+          })}
         </div>
         <div className="flex items-center gap-4">
           {user ? (
             <div className="flex items-center gap-3">
               <div className="hidden md:flex items-center gap-2">
                 {user.photoURL ? (
-                  <img 
-                    src={user.photoURL} 
-                    alt={user.displayName} 
+                  <img
+                    src={user.photoURL}
+                    alt={user.displayName}
                     className="w-8 h-8 rounded-full border-2 border-primary"
                     referrerPolicy="no-referrer"
                   />
@@ -59,7 +69,7 @@ export const Navbar = ({ onNavigate, currentScreen, cartCount, user }: { onNavig
                   {user.displayName.split(' ')[0]}
                 </span>
               </div>
-              <button 
+              <button
                 onClick={handleLogout}
                 className="text-outline hover:text-error active:scale-95 duration-200 cursor-pointer"
                 title="Logout"
@@ -68,17 +78,17 @@ export const Navbar = ({ onNavigate, currentScreen, cartCount, user }: { onNavig
               </button>
             </div>
           ) : (
-            <button 
-              onClick={() => onNavigate('login')}
+            <button
+              onClick={() => navigate('/login')}
               className="text-primary hover:text-primary-dim active:scale-95 duration-200 cursor-pointer flex items-center gap-2"
             >
               <LogIn size={20} />
               <span className="hidden md:inline text-[10px] font-bold uppercase tracking-widest">Login</span>
             </button>
           )}
-          <button 
+          <button
             className="text-primary active:scale-95 duration-200 cursor-pointer relative"
-            onClick={() => onNavigate('hangar')}
+            onClick={() => navigate('/hangar')}
           >
             <ShoppingCart size={24} />
             {cartCount > 0 && (
@@ -93,25 +103,33 @@ export const Navbar = ({ onNavigate, currentScreen, cartCount, user }: { onNavig
   );
 };
 
-export const BottomNav = ({ onNavigate, currentScreen }: { onNavigate: (s: string) => void, currentScreen: string }) => (
-  <nav className="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center py-3 px-4 bg-surface/80 backdrop-blur-xl border-t border-outline-variant/15 z-50">
-    {[
-      { id: 'home', icon: Home, label: 'Home' },
-      { id: 'catalog', icon: Grid, label: 'Catalog' },
-      { id: 'orders', icon: Receipt, label: 'Orders' },
-      { id: 'profile', icon: User, label: 'Profile' },
-    ].map(({ id, icon: Icon, label }) => (
-      <button 
-        key={id}
-        onClick={() => onNavigate(id)}
-        className={`flex flex-col items-center justify-center px-4 py-1 transition-all active:translate-y-0.5 ${currentScreen === id ? 'text-primary font-bold bg-surface-container-high rounded-xl' : 'text-outline'}`}
-      >
-        <Icon size={20} fill={currentScreen === id ? "currentColor" : "none"} />
-        <span className="font-sans text-[10px] uppercase tracking-widest mt-1">{label}</span>
-      </button>
-    ))}
-  </nav>
-);
+export const BottomNav = ({ currentPath }: { currentPath: string }) => {
+  const navigate = useNavigate();
+  const items = [
+    { path: '/', icon: Home, label: 'Home' },
+    { path: '/catalog', icon: Grid, label: 'Catalog' },
+    { path: '/orders', icon: Receipt, label: 'Orders' },
+    { path: '/profile', icon: User, label: 'Profile' },
+  ];
+
+  return (
+    <nav className="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center py-3 px-4 bg-surface/80 backdrop-blur-xl border-t border-outline-variant/15 z-50">
+      {items.map(({ path, icon: Icon, label }) => {
+        const active = path === '/' ? currentPath === '/' : currentPath.startsWith(path);
+        return (
+          <button
+            key={path}
+            onClick={() => navigate(path)}
+            className={`flex flex-col items-center justify-center px-4 py-1 transition-all active:translate-y-0.5 ${active ? 'text-primary font-bold bg-surface-container-high rounded-xl' : 'text-outline'}`}
+          >
+            <Icon size={20} fill={active ? 'currentColor' : 'none'} />
+            <span className="font-sans text-[10px] uppercase tracking-widest mt-1">{label}</span>
+          </button>
+        );
+      })}
+    </nav>
+  );
+};
 
 export const SpecTile = ({ label, value, unit, accent = false }: { label: string, value: string, unit?: string, accent?: boolean }) => (
   <div className={`p-8 w-64 border-l-2 ${accent ? 'bg-surface-variant/60 border-primary/20' : 'bg-surface-container-high/60 border-primary/10'} backdrop-blur-xl`}>

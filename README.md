@@ -1,20 +1,42 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Solo-RWA
 
-# Run and deploy your AI Studio app
+![Solo-RWA Banner](https://images.squarespace-cdn.com/content/v1/67096197aac638276220929a/5d196501-80fe-441f-b7e1-106b0e234455/hero-solo-noem.jpg)
 
-This contains everything you need to run your app locally.
+A decentralized payment and escrow platform enabling direct transactions between manufacturers and buyers.
 
-View your app in AI Studio: https://ai.studio/apps/b21a48c0-74a6-46b3-b746-fdca232ff2b2
+Instead of relying on traditional intermediaries, funds are secured through smart contracts and released based on verified production milestones. This reduces fraud, increases transparency, and lowers transaction friction.
 
-## Run Locally
+Our initial use case focuses on electric vehicles (EVs), demonstrating how real-world assets can be integrated into a blockchain-based payment and escrow system from a manufacturer perspective.
 
-**Prerequisites:**  Node.js
+## Vision
 
+Build trusted B2B commerce rails where manufacturers and buyers can transact directly with programmable settlement logic, milestone-based payouts, and auditable on-chain records.
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## Problem
+
+Traditional manufacturing payments often involve:
+
+- Multiple intermediaries and manual coordination
+- Limited visibility into payment status and production progress
+- Counterparty risk for both buyers and manufacturers
+- Delays and high operational friction
+
+## Solution
+
+Solo-RWA uses smart contract escrow to:
+
+- Lock funds securely at transaction start
+- Define clear production or delivery milestones
+- Release funds automatically when milestones are verified
+- Keep payment and fulfillment events transparent and traceable
+
+## Initial Use Case: Electric Vehicles
+
+The first implementation targets EV manufacturing workflows where milestone-based financing and delivery trust are critical. This serves as a practical model for expanding the system to other real-world asset categories.
+
+## Long-Term Direction
+
+- Expand beyond EVs to broader real-world asset verticals
+- Standardize milestone verification flows
+- Improve interoperability across blockchain and enterprise systems
+- Enable programmable, low-friction manufacturer financing
